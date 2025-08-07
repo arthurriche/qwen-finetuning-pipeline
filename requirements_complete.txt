@@ -1,0 +1,47 @@
+# Requirements complets pour le fine-tuning Qwen 1.7B avec LoRA
+# Installation: pip install -r requirements_complete.txt
+
+# PyTorch avec CUDA support (versions spécifiques pour compatibilité)
+torch==2.1.0
+torchvision==0.16.0
+torchaudio==2.1.0
+
+# Transformers et PEFT pour LoRA (versions stables)
+transformers==4.36.0
+peft==0.7.1
+accelerate==0.25.0
+
+# Datasets et monitoring
+datasets==2.14.0
+tensorboard==2.15.0
+wandb==0.16.0
+
+# Utilitaires essentiels
+numpy==1.24.3
+scikit-learn==1.3.0
+tqdm==4.66.0
+pandas==2.0.3
+
+# Monitoring GPU et performance
+nvidia-ml-py3==7.352.0
+psutil==5.9.5
+
+# Logging et configuration
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# Sérialisation et formatage
+huggingface-hub==0.19.4
+safetensors==0.4.0
+
+# Optimisations pour GPU
+xformers==0.0.22.post7
+
+# Utilitaires pour le développement
+jupyter==1.0.0
+matplotlib==3.7.2
+seaborn==0.12.2
+
+# Tests et validation
+pytest==7.4.0
+pytest-cov==4.1.0
