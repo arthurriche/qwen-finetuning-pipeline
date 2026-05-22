@@ -1,5 +1,25 @@
 # 🚀 Fine-tuning Qwen 1.7B - Pipeline Complète
 
+## ⭐ STAR Summary
+
+**Situation**  
+Industrial companies need to identify the best product or solution among several options across highly specialized sectors (submarine drones, energy submetering, smart water, etc.). General-purpose LLMs lack the domain-specific reasoning to reliably make these selections.
+
+**Task**  
+Fine-tune Qwen 1.7B — a compact but capable language model — to accurately predict the optimal product index across 8 industrial sectors, using a dataset of 200,000 labelled samples.
+
+**Action**  
+Built a complete fine-tuning pipeline implementing two complementary techniques:
+- **GRPO** (Generative Reinforcement Learning from Policy Optimization): the model predicts an index and receives a reward signal based on the quality of its choice.
+- **SFT** (Supervised Fine-Tuning) with LoRA: the model learns from correct/incorrect feedback using parameter-efficient adaptation (~2-3GB VRAM).
+
+TensorBoard monitoring, frequent checkpointing (every 100 steps), and automated validation scripts were integrated for production reliability. In parallel, a **Retrieval-Augmented Generation (RAG)** approach was explored to enhance contextual understanding using product datasheets and technical documentation (see [RAG section](#-rag-on-technical-documentation) below).
+
+**Result**  
+A production-ready fine-tuning pipeline supporting 8 industrial sectors with VRAM-efficient training. Both GRPO and SFT variants are independently trainable and monitorable via TensorBoard, with results validatable through `validate_pipeline.py`.
+
+---
+
 ## 📋 Vue d'ensemble
 
 Ce repository contient une pipeline complète de fine-tuning pour le modèle Qwen 1.7B utilisant deux techniques : **GRPO** (Generative Reinforcement Learning from Policy Optimization) et **SFT** (Supervised Fine-Tuning) avec LoRA.
@@ -130,6 +150,26 @@ tensorboard --logdir=./sft_outputs --port=6007
 - ✅ **Checkpointing Fréquent** : Sauvegarde toutes les 100 steps
 - ✅ **Instructions Réelles** : Chargement depuis `instructions_v6.json` avec fallback
 - ✅ **Gestion d'Erreurs** : Logs détaillés et fallback robuste
+
+## 🔍 RAG on Technical Documentation
+
+In parallel to the GRPO and SFT fine-tuning approaches, a **Retrieval-Augmented Generation (RAG)** system was explored to enhance product selection using domain-specific technical documentation.
+
+### How It Works
+
+Rather than relying solely on the model's parametric knowledge, RAG supplements the LLM's context at inference time with relevant retrieved documents:
+
+1. **Indexing**: Technical datasheets, product specifications, and documentation for each sector are chunked into passages and embedded into a vector database (e.g., FAISS or Chroma) using a sentence embedding model.
+2. **Retrieval**: At query time, the product comparison question is embedded and the top-k most semantically similar document chunks are retrieved via cosine similarity search.
+3. **Augmented Generation**: The retrieved chunks are injected directly into the prompt context, allowing the model to ground its selection in actual technical specifications rather than relying purely on trained weights.
+
+### Why RAG for Industrial Products?
+
+Industrial product documentation is highly specialized and evolves frequently (new product versions, updated specs, new certifications). Fine-tuning alone cannot keep pace with these updates. RAG offers:
+- **Up-to-date knowledge** without retraining — simply re-index updated datasheets
+- **Traceability** — the model's reasoning can be traced back to source documents
+- **Better accuracy** on niche technical comparisons where parametric knowledge falls short
+- **Complementarity with SFT/GRPO** — fine-tuning teaches the model *how* to reason about products; RAG provides the *what* (specific technical details)
 
 ## 📚 Documentation
 
